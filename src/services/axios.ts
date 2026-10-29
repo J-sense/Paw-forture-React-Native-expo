@@ -1,13 +1,13 @@
-import axios, { InternalAxiosRequestConfig, AxiosResponse } from "axios";
-import { getAuthToken } from "@/utils/token";
+import { logError } from "@/utils/error.log";
 import { logGetSuccess } from "@/utils/get.log";
 import { logSuccess } from "@/utils/post.log";
-import { logError } from "@/utils/error.log";
+import { clearAuth, getAuthToken } from "@/utils/token";
+import axios, { AxiosResponse, InternalAxiosRequestConfig } from "axios";
+import { toast } from "burnt";
+import { router } from "expo-router";
 
-const apiBaseUrl =
-  process.env.EXPO_PUBLIC_API_BASE_URL ||
-  process.env.NEXT_PUBLIC_API_BASE_URL ||
-  "https://api.example.com";
+const apiBaseUrl = "https://desertic-troy-aeruginous.ngrok-free.dev/api/v1";
+console.log(apiBaseUrl, "apiBaseUrl");
 
 // Create a single shared Axios instance
 export const axiosInstance = axios.create({
@@ -47,13 +47,31 @@ axiosInstance.interceptors.response.use(
     }
     return response;
   },
-  (error) => {
+  async (error) => {
     const method = error.config?.method?.toUpperCase() || "REQUEST";
     logError(method, error, error.config?.data);
 
-    // Global 401 Unauthorized handling (e.g. redirect to login or clear token)
+    // Global 401 Unauthorized handling (token expired / invalid)
     if (error.response?.status === 401) {
-      console.warn("Unauthorized request (401). Token might be expired.");
+      console.warn("🔒 Unauthorized (401). Clearing invalid tokens and redirecting to login...");
+      await clearAuth();
+
+      // Only redirect if not already attempting login
+      if (!error.config?.url?.includes("/auth/login")) {
+        const errMsg =
+          error.response?.data?.message_eng ||
+          "Session expired. Please log in again.";
+        const errMsgZh =
+          error.response?.data?.message_chinese || "登入已過期，請重新登入。";
+
+        toast({
+          title: errMsg,
+          message: errMsgZh,
+          preset: "error",
+        });
+
+        router.replace("/(auth)/login");
+      }
     }
 
     return Promise.reject(error);

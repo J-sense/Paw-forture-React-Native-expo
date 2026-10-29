@@ -10,11 +10,16 @@ export const httpGet = async <T = any>(
   endpoint: string,
   options?: ApiRequestOptions
 ): Promise<T> => {
-  const response = await axiosInstance.get<T>(endpoint, {
-    params: options?.params,
-    headers: options?.headers,
-  });
-  return response.data;
+  try {
+    const response = await axiosInstance.get<T>(endpoint, {
+      params: options?.params,
+      headers: options?.headers,
+    });
+    return response.data;
+  } catch (error: any) {
+    console.error(`❌ [httpGet] ${endpoint}:`, error?.response?.data || error.message);
+    throw error;
+  }
 };
 
 export const httpPost = async <T = any>(
@@ -22,11 +27,16 @@ export const httpPost = async <T = any>(
   data?: unknown,
   options?: ApiRequestOptions
 ): Promise<T> => {
-  const response = await axiosInstance.post<T>(endpoint, data, {
-    params: options?.params,
-    headers: options?.headers,
-  });
-  return response.data;
+  try {
+    const response = await axiosInstance.post<T>(endpoint, data, {
+      params: options?.params,
+      headers: options?.headers,
+    });
+    return response.data;
+  } catch (error: any) {
+    console.error(`❌ [httpPost] ${endpoint}:`, error?.response?.data || error.message);
+    throw error;
+  }
 };
 
 export const httpPut = async <T = any>(
@@ -34,22 +44,32 @@ export const httpPut = async <T = any>(
   data?: unknown,
   options?: ApiRequestOptions
 ): Promise<T> => {
-  const response = await axiosInstance.put<T>(endpoint, data, {
-    params: options?.params,
-    headers: options?.headers,
-  });
-  return response.data;
+  try {
+    const response = await axiosInstance.put<T>(endpoint, data, {
+      params: options?.params,
+      headers: options?.headers,
+    });
+    return response.data;
+  } catch (error: any) {
+    console.error(`❌ [httpPut] ${endpoint}:`, error?.response?.data || error.message);
+    throw error;
+  }
 };
 
 export const httpDelete = async <T = any>(
   endpoint: string,
   options?: ApiRequestOptions
 ): Promise<T> => {
-  const response = await axiosInstance.delete<T>(endpoint, {
-    params: options?.params,
-    headers: options?.headers,
-  });
-  return response.data;
+  try {
+    const response = await axiosInstance.delete<T>(endpoint, {
+      params: options?.params,
+      headers: options?.headers,
+    });
+    return response.data;
+  } catch (error: any) {
+    console.error(`❌ [httpDelete] ${endpoint}:`, error?.response?.data || error.message);
+    throw error;
+  }
 };
 
 export const httpPatch = async <T = any>(
@@ -57,11 +77,16 @@ export const httpPatch = async <T = any>(
   data?: unknown,
   options?: ApiRequestOptions
 ): Promise<T> => {
-  const response = await axiosInstance.patch<T>(endpoint, data, {
-    params: options?.params,
-    headers: options?.headers,
-  });
-  return response.data;
+  try {
+    const response = await axiosInstance.patch<T>(endpoint, data, {
+      params: options?.params,
+      headers: options?.headers,
+    });
+    return response.data;
+  } catch (error: any) {
+    console.error(`❌ [httpPatch] ${endpoint}:`, error?.response?.data || error.message);
+    throw error;
+  }
 };
 
 export const httpClient = {
